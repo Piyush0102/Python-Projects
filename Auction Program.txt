@@ -1,0 +1,89 @@
+import os
+
+bids = {}
+bidding_finished = False
+
+def find_highest_bidder(bidding_record):
+    highest_bid = 0
+    winner = ""
+    for bidder in bidding_record:
+        bid_amount = bidding_record[bidder]
+        if bid_amount > highest_bid: 
+            highest_bid = bid_amount
+            winner = bidder
+    print(f"The winner is {winner} with a bid of ${highest_bid}")
+
+reserve_price = int(input("Enter the reserve price: $"))
+bid_increment = int(input("Enter the minimum bid increment: $"))
+
+while not bidding_finished:
+    name = input("What is your name?: ")
+
+    # To check if the user has already placed a bid
+    if name in bids:
+        print(f"{name}, you already placed a bid.")
+        action = input("Do you want to fold (type 'fold') or increase your bid (type 'increase')? ").lower()
+        if action == 'fold':
+            continue  # User folds and skips this round
+        elif action == 'increase':
+            pass  # User wants to increase their bid
+        else:
+            print("Invalid choice. Please enter 'fold' or 'increase'.")
+            continue
+
+    price = int(input("What is your bid?: $"))
+
+    if price < reserve_price:
+        print(f"Your bid is below the reserve price of ${reserve_price}. Please bid again.")
+        continue
+
+    if price <= bids.get(name, 0):
+        print("Your bid should be higher than the current highest bid.")
+        continue
+
+    if price < (max(bids.values(), default=0) + bid_increment):
+        print(f"Your bid should be at least ${bid_increment} higher than the current highest bid.")
+        continue
+
+    bids[name] = price
+    should_continue = input("Are there any other bidders? Type 'yes' or 'no'.\n")
+    
+    if should_continue.lower() == "no":
+        bidding_finished = True
+        find_highest_bidder(bids)
+    elif should_continue.lower() == "yes":
+        os.system('cls' if os.name == 'nt' else 'clear')
+
+
+OUTPUT:
+Enter the reserve price: $20
+Enter the minimum bid increment: $5
+What is your name?: Piyush
+What is your bid?: $21
+Are there any other bidders? Type 'yes' or 'no'.
+yes
+What is your name?: Shantanu
+What is your bid?: $28
+Are there any other bidders? Type 'yes' or 'no'.
+yes
+What is your name?: Piyush
+Piyush, you already placed a bid.
+Do you want to fold (type 'fold') or increase your bid (type 'increase')? increase
+What is your bid?: $35
+Are there any other bidders? Type 'yes' or 'no'.
+yes
+What is your name?: Sahil
+What is your bid?: $100
+Are there any other bidders? Type 'yes' or 'no'.
+yes
+What is your name?: Shantanu
+Shantanu, you already placed a bid.
+Do you want to fold (type 'fold') or increase your bid (type 'increase')? fold
+What is your name?: Piyush
+Piyush, you already placed a bid.
+Do you want to fold (type 'fold') or increase your bid (type 'increase')? increase
+What is your bid?: $105
+Are there any other bidders? Type 'yes' or 'no'.
+no
+The winner is Piyush with a bid of $105
+​
